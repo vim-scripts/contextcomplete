@@ -21,13 +21,13 @@ CUSTOMIZATION                                   *contextcomplete-customization*
 *g:contextcomplete_detect_regexes*
 
 contextcomplete can be customized to use user defined regexes to detect what
-kind of completion to use.  The last regex specified that matches the text
-before the cursor will be the completion type that is used.  If
-|g:contextcomplete_detect_regexes|.ignore is specified, it will always override
-any of the other completion types and make |g:contextcomplete_trigger| behave
-as it normally would in insert mode.  The same happens if none of the
-specified regexes match.  A table for the possible keys in the
-|g:contextcomplete_detect_regexes| is available below.
+kind of completion to use.  The first completion type specified in
+|g:contextcomplete_key_order| whose associated regex matches is the
+completion type that is used.  If |g:contextcomplete_detect_regexes|.ignore is
+specified, it will always override any of the other completion types and make
+|g:contextcomplete_trigger| behave as it normally would in insert mode.  The
+same happens if none of the specified regexes match.  A table for the possible
+keys in |g:contextcomplete_detect_regexes| is available below.
 
   Dictionary Key        Related Keystroke   Default Value ~
   lines                 i_CTRL-X_CTRL-L     None
@@ -54,6 +54,23 @@ Example of a configuration for detection regexes: >
   let g:contextcomplete_detect_regexes = {
       \ 'keywords': '\v<\w+>$', 'ignore': '\v^\s*$'
   \ }
+<
+
+*g:contextcomplete_key_order*
+
+You can specify which completion types have precedence over each other using
+this list.  By default, the order is the same as the completion types are
+listed in |g:contextcomplete_detect_regexes|.  If any of the possible
+completion types are left out, their corresponding completion types in
+|g:contextcomplete_detect_regexes| will be ignored.  Ignore will always taked
+precedence over any completion types in this list.
+
+Example (the default configuration): >
+  let g:contextcomplete_key_order = [
+    \ 'lines', 'keywords', 'dictionary', 'thesaurus', 'keywords-included',
+    \ 'tags', 'file-names', 'macros', 'cmdline', 'user', 'omnicomplete',
+    \ 'spelling', 'complete-keywords'
+  \ ]
 <
 
 *g:contextcomplete_trigger*

@@ -1,7 +1,7 @@
 " File: contextcomplete.vim
 " Description: Decide which completion type to use based on context
 " Maintainer: Evergreen
-" Version: 1.0.0
+" Version: 1.1.0
 " Last Change: May 28th, 2015
 " License: Vim License
 
@@ -17,13 +17,7 @@ let g:contextcomplete_loaded = 1
 " Key to initiate context completion.
 let g:contextcomplete_trigger = get(g:, 'contextcomplete_trigger', '\<Tab>')
 
-" The possible dictionary keys reference a kind of insert completion, which can
-" be found in the 'ins-completion' help topic.  If a dictionary key is not used,
-" it is ignored.  The default value is the last item in the dictionary that
-" matches.  Will fall back to the previous one if the specified regex doesn't
-" match.  The regex associated with the key is the regex that is used to figure
-" out whether to start using that completion mode.
-
+" Dictionary of completion types and the regexes used to detect them.
 " Possible dictionary keys:
 " lines, keywords, dictionary, thesaurus, keywords-included, tags, file-names,
 " macros, cmdline, user, omnicomplete, spelling, complete-keywords, ignore
@@ -32,6 +26,13 @@ let g:contextcomplete_detect_regexes = get(g:,
     \ 'keywords': '\v<\w+>$', 'omnicomplete': '\v\.$',
     \ 'ignore': '\v^\s*$'
 \ })
+
+" Order of precedence for each type of completion.  (first one to match is used)
+let g:contextcomplete_key_order = get(g:, 'contextcomplete_key_order', [
+    \ 'lines', 'keywords', 'dictionary', 'thesaurus', 'keywords-included',
+    \ 'tags', 'file-names', 'macros', 'cmdline', 'user', 'omnicomplete',
+    \ 'spelling', 'complete-keywords'
+\ ])
 
 " The readable name of the completion, and the associated key press to initiate
 " that completion mode.
@@ -54,18 +55,21 @@ function! s:ContextComplete()
     " This gets all the text that is behind the cursor using string slices.
     let line_before_col = current_line[0:col(".")-2]
 
+    if line_before_col =~# g:contextcomplete_detect_regexes['ignore']
+        return eval('"' . g:contextcomplete_trigger . '"')
+    endif
+
     let completion_type = -1
 
-    for type in keys(g:contextcomplete_detect_regexes)
+    for type in g:contextcomplete_key_order
         let detect_regex = g:contextcomplete_detect_regexes[type]
         if line_before_col =~# detect_regex
             let completion_type = type
+            break
         endif
     endfor
 
     if completion_type == -1
-        return eval('"' . g:contextcomplete_trigger . '"')
-    elseif line_before_col =~# g:contextcomplete_detect_regexes['ignore']
         return eval('"' . g:contextcomplete_trigger . '"')
     endif
 
