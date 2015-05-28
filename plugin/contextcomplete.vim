@@ -1,7 +1,7 @@
 " File: contextcomplete.vim
 " Description: Decide which completion type to use based on context
 " Maintainer: Evergreen
-" Version: 1.1.0
+" Version: 1.1.1
 " Last Change: May 28th, 2015
 " License: Vim License
 
@@ -55,14 +55,19 @@ function! s:ContextComplete()
     " This gets all the text that is behind the cursor using string slices.
     let line_before_col = current_line[0:col(".")-2]
 
-    if line_before_col =~# g:contextcomplete_detect_regexes['ignore']
+    if line_before_col =~# get(g:contextcomplete_detect_regexes, 'ignore', '')
         return eval('"' . g:contextcomplete_trigger . '"')
     endif
 
     let completion_type = -1
 
     for type in g:contextcomplete_key_order
-        let detect_regex = g:contextcomplete_detect_regexes[type]
+        if has_key(g:contextcomplete_detect_regexes, type) != 0
+            let detect_regex = g:contextcomplete_detect_regexes[type]
+        else
+            continue
+        endif
+
         if line_before_col =~# detect_regex
             let completion_type = type
             break
