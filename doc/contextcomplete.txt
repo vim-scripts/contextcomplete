@@ -1,0 +1,79 @@
+*contextcomplete.txt*  Decide which type of completion to use based on context
+
+Author: Evergreen <evergreenubuntu[AT]gmail[DOT]com>
+License: Same terms as Vim itself (see |license|)
+
++----------------------------------------------------------------------------+~
+INTRODUCTION                                                  *contextcomplete*
+
+contextcomplete is a plugin that decides what kind of |ins-completion| to use
+based on the text that is before the cursor.  This is triggered by the key
+specified in |g:contextcomplete_trigger|.  This key is also mapped
+to cycle through all the possible options until the completion menu is
+exited.  Regexes are used to determine which type of completion is used, which
+can be configured using the |g:contextcomplete_detect_regexes| dictionary.
+A table of possible keys for this dictionary and the related completion type
+can be found at |g:contextcomplete_detect_regexes|.
+
++----------------------------------------------------------------------------+~
+CUSTOMIZATION                                   *contextcomplete-customization*
+
+*g:contextcomplete_detect_regexes*
+
+contextcomplete can be customized to use user defined regexes to detect what
+kind of completion to use.  The last regex specified that matches the text
+before the cursor will be the completion type that is used.  If
+|g:contextcomplete_detect_regexes|.ignore is specified, it will always override
+any of the other completion types and make |g:contextcomplete_trigger| behave
+as it normally would in insert mode.  The same happens if none of the
+specified regexes match.  A table for the possible keys in the
+|g:contextcomplete_detect_regexes| is available below.
+
+  Dictionary Key        Related Keystroke   Default Value ~
+  lines                 i_CTRL-X_CTRL-L     None
+  keywords              i_CTRL-X_CTRL-N     '\v<\w+>$'
+  dictionary            i_CTRL-X_CTRL-K     None
+  thesaurus             i_CTRL-X_CTRL-T     None
+  keywords-included     i_CTRL-X_CTRL-I     None
+  tags                  i_CTRL-X_CTRL-]     None
+  file-names            i_CTRL-X_CTRL-F     None
+  macros                i_CTRL-X_CTRL-D     None
+  cmdline               i_CTRL-X_CTRL-V     None
+  user                  i_CTRL-X_CTRL-U     None
+  omnicomplete          i_CTRL-X_CTRL-O     '\v\.$'
+  spelling              i_CTRL-X_s          None
+  complete-keywords     i_CTRL-N            None
+  ignore                None                '\v^\s*$'
+
+You can find help for what kind of completion each related keystroke does by
+looking it up in vim's help.  For omnicomplete, you would do: >
+  :help i_CTRL-X_CTRL-O
+<
+
+Example of a configuration for detection regexes: >
+  let g:contextcomplete_detect_regexes = {
+      \ 'keywords': '\v<\w+>$', 'ignore': '\v^\s*$'
+  \ }
+<
+
+*g:contextcomplete_trigger*
+
+You can also specify which key is used to trigger contextcomplete.  This key
+is also temporarily mapped to cycle throught all the completion options until
+the completion menu is exited. The default value for this option is '\<Tab>'.
+You must use a literal string to specify this key, which can be done by
+enclosing the value in single quotes.  If you do use a special key like
+<Tab>, you must escape it like in the example below.
+
+Example: >
+  let g:contextcomplete_trigger = '\<Tab>'
+<
+
++----------------------------------------------------------------------------+~
+ISSUES                                                 *contextcomplete-issues*
+
+Issues can be reported at the github issue tracker or they can be sent to my
+email at <evergreenubuntu[AT]gmail[DOT]com>.  The github issue tracker is at
+https://github.com/4Evergreen4/vim-contextcomplete/issues.
+
+ vim:tw=78:ts=2:sw=2:sts=2:ft=help:norl:
