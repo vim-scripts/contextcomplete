@@ -1,8 +1,8 @@
 " File: contextcomplete.vim
 " Description: Decide which completion type to use based on context
 " Maintainer: Evergreen
-" Version: 1.1.1
-" Last Change: May 28th, 2015
+" Version: 1.2.1
+" Last Change: May 30th, 2015
 " License: Vim License
 
 " BOILERPLATE {{{
@@ -23,15 +23,13 @@ let g:contextcomplete_trigger = get(g:, 'contextcomplete_trigger', '\<Tab>')
 " macros, cmdline, user, omnicomplete, spelling, complete-keywords, ignore
 let g:contextcomplete_detect_regexes = get(g:,
 \ 'contextcomplete_detect_regexes', {
-    \ 'keywords': '\v<\w+>$', 'omnicomplete': '\v\.$',
-    \ 'ignore': '\v^\s*$'
+    \ 'keywords': '\v\w{-1,}$', 'file-names': '\v\/(\w|\-){-}$',
+    \ 'omnicomplete': '\v\.\w{-}$', 'ignore': '\v^\s*$'
 \ })
 
 " Order of precedence for each type of completion.  (first one to match is used)
 let g:contextcomplete_key_order = get(g:, 'contextcomplete_key_order', [
-    \ 'lines', 'keywords', 'dictionary', 'thesaurus', 'keywords-included',
-    \ 'tags', 'file-names', 'macros', 'cmdline', 'user', 'omnicomplete',
-    \ 'spelling', 'complete-keywords'
+    \ 'file-names', 'omnicomplete', 'keywords',
 \ ])
 
 " The readable name of the completion, and the associated key press to initiate
@@ -49,7 +47,7 @@ let s:contextcomplete_type_with_keypress = {
 
 " FUNCTIONS {{{
 " This function returns the keypress for the detected completion mode, and if it
-" is not found or matches ignore, returns a tab keypress.
+" is not found or matches ignore, returns a the trigger's normal keypress
 function! s:ContextComplete()
     let current_line = getline(".")
     " This gets all the text that is behind the cursor using string slices.
@@ -78,7 +76,7 @@ function! s:ContextComplete()
         return eval('"' . g:contextcomplete_trigger . '"')
     endif
 
-    " This makes tab cycle through completion options
+    " This makes the trigger key cycle through completion options
     exe 'inoremap ' . substitute(g:contextcomplete_trigger, "\\", "", "g") .
                 \ " <c-n>"
 
@@ -87,12 +85,12 @@ endfunction
 " }}}
 
 " MAPPINGS {{{
-" Run the result of ContextComplete when tab key is pressed
+" Run the result of ContextComplete when the trigger key is pressed
 exe 'inoremap <expr> ' . substitute(g:contextcomplete_trigger, "\\", "", "g") .
         \ ' <SID>ContextComplete()'
 
-" When completion mode is exited, make tab behave like before it was mapped to
-" <c-n>.
+" When completion mode is exited, make trigger key behave like before it was
+" mapped to <c-n>.
 autocmd CompleteDone * exe 'inoremap <expr> ' . substitute(
         \ g:contextcomplete_trigger, "\\", "", "g") . ' <SID>ContextComplete()'
 " }}}

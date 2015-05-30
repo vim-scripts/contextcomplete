@@ -16,3 +16,12 @@ Options
 -------
 See `doc/contextcomplete.txt`.
 
+Credits
+-------
+Thank you to [bairu](https://github.com/dahu) for helping me debug and write
+this plugin.
+
+License
+-------
+contextcomplete is distributed under the same terms as Vim itself.  See
+`:help license`

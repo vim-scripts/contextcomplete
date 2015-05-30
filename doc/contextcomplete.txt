@@ -31,16 +31,16 @@ keys in |g:contextcomplete_detect_regexes| is available below.
 
   Dictionary Key        Related Keystroke   Default Value ~
   lines                 i_CTRL-X_CTRL-L     None
-  keywords              i_CTRL-X_CTRL-N     '\v<\w+>$'
+  keywords              i_CTRL-X_CTRL-N     '\v\w{-1,}$'
   dictionary            i_CTRL-X_CTRL-K     None
   thesaurus             i_CTRL-X_CTRL-T     None
   keywords-included     i_CTRL-X_CTRL-I     None
   tags                  i_CTRL-X_CTRL-]     None
-  file-names            i_CTRL-X_CTRL-F     None
+  file-names            i_CTRL-X_CTRL-F     '\v\/(\w|\-){-}$'
   macros                i_CTRL-X_CTRL-D     None
   cmdline               i_CTRL-X_CTRL-V     None
   user                  i_CTRL-X_CTRL-U     None
-  omnicomplete          i_CTRL-X_CTRL-O     '\v\.$'
+  omnicomplete          i_CTRL-X_CTRL-O     '\v\.\w{-}$'
   spelling              i_CTRL-X_s          None
   complete-keywords     i_CTRL-N            None
   ignore                None                '\v^\s*$'
@@ -49,6 +49,10 @@ You can find help for what kind of completion each related keystroke does by
 looking it up in vim's help.  For omnicomplete, you would do: >
   :help i_CTRL-X_CTRL-O
 <
+
+The default configuration of this dictionary will use keyword completion
+before a word, file name completion before a forward slash, and omnicompletion
+before a dot.
 
 Example of a configuration for detection regexes: >
   let g:contextcomplete_detect_regexes = {
@@ -59,13 +63,12 @@ Example of a configuration for detection regexes: >
 *g:contextcomplete_key_order*
 
 You can specify which completion types have precedence over each other using
-this list.  By default, the order is the same as the completion types are
-listed in |g:contextcomplete_detect_regexes|.  If any of the possible
-completion types are left out, their corresponding completion types in
-|g:contextcomplete_detect_regexes| will be ignored.  Ignore will always taked
-precedence over any completion types in this list.
+this list.  By default, the order is: file-names, omnicomplete, keywords.
+If any of the possible completion types are left out, their corresponding
+completion types in |g:contextcomplete_detect_regexes| will be ignored.
+Ignore will always takes precedence over any completion types in this list.
 
-Example (the default configuration): >
+Example: >
   let g:contextcomplete_key_order = [
     \ 'lines', 'keywords', 'dictionary', 'thesaurus', 'keywords-included',
     \ 'tags', 'file-names', 'macros', 'cmdline', 'user', 'omnicomplete',
@@ -92,5 +95,12 @@ ISSUES                                                 *contextcomplete-issues*
 Issues can be reported at the github issue tracker or they can be sent to my
 email at <evergreenubuntu[AT]gmail[DOT]com>.  The github issue tracker is at
 https://github.com/4Evergreen4/vim-contextcomplete/issues.
+
++----------------------------------------------------------------------------+~
+CREDITS                                               *contextcomplete-credits*
+
+Thank you to bairu for helping me write and debug this plugin.
+
++----------------------------------------------------------------------------+~
 
  vim:tw=78:ts=2:sw=2:sts=2:ft=help:norl:
